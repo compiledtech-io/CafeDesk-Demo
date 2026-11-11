@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF6F0">
+  <title>CafeDesk — Brew &amp; Bean Café</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --espresso: #6F4E37;
+      --caramel: #C8873A;
+      --cream: #FAF6F0;
+      --card: #FFFFFF;
+      --ink: #2B2118;
+      --green: #2E7D4F;
+      --whatsapp: #25D366;
+      --muted: #8A7A6B;
+      --border: #EDE3D6;
+      --danger: #B94A43;
+      --shadow: 0 8px 24px rgba(67, 45, 28, .07);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--cream); color: var(--ink); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(200, 135, 58, .34); outline-offset: 2px; }
+    .app { width: min(100%, 430px); min-height: 100vh; margin: 0 auto; position: relative; background: var(--cream); padding-bottom: 94px; }
+    .app-header { padding: calc(15px + env(safe-area-inset-top)) 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid rgba(237, 227, 214, .8); background: rgba(250,246,240,.96); position: sticky; top: 0; z-index: 5; backdrop-filter: blur(12px); }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 13px; background: var(--espresso); color: #fff; display: grid; place-items: center; font-size: 19px; flex: 0 0 auto; }
+    .brand-name { font-weight: 750; font-size: 15px; letter-spacing: -.3px; white-space: nowrap; }
+    .tab-title { color: var(--muted); font-size: 12px; font-weight: 650; text-align: right; }
+    main { padding: 18px 16px 22px; }
+    .screen { display: none; animation: appear .16s ease-out; }
+    .screen.active { display: block; }
+    @keyframes appear { from { opacity: .55; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+    h1 { font-size: 23px; line-height: 1.2; margin: 0 0 5px; letter-spacing: -.6px; }
+    h2 { font-size: 16px; margin: 0; letter-spacing: -.25px; }
+    h3 { font-size: 14px; margin: 0; }
+    p { margin: 0; }
+    .subtle { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 23px 0 11px; }
+    .section-heading:first-child { margin-top: 0; }
+    .card { background: var(--card); border: 1px solid rgba(237,227,214,.8); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); }
+    .stack { display: grid; gap: 11px; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .between { justify-content: space-between; }
+    .wrap { flex-wrap: wrap; }
+    .muted { color: var(--muted); }
+    .tiny { font-size: 11px; }
+    .pill { border-radius: 999px; background: #F7F1E9; color: var(--espresso); padding: 5px 9px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .pill.green { background: #EAF4EC; color: var(--green); }
+    .pill.red { background: #FCECEA; color: var(--danger); }
+    .pill.gold { background: #FBF0DF; color: #95601F; }
+    .btn { border: 0; border-radius: 12px; min-height: 46px; padding: 0 15px; background: var(--espresso); color: #fff; font-weight: 700; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; transition: transform .12s, opacity .12s; }
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.full { width: 100%; }
+    .btn.small { min-height: 38px; padding: 0 12px; font-size: 12px; border-radius: 10px; }
+    .btn.outline { background: white; color: var(--espresso); border: 1px solid var(--border); }
+    .btn.soft { background: #F4EDE4; color: var(--espresso); }
+    .btn.green { background: var(--green); }
+    .btn.whatsapp { background: var(--whatsapp); color: #10371F; }
+    .btn.danger-soft { background: #FCECEA; color: var(--danger); }
+    .icon-button { min-width: 44px; min-height: 44px; display: grid; place-items: center; border: 1px solid var(--border); color: var(--espresso); background: #fff; border-radius: 12px; font-size: 17px; }
+    .input, select, textarea { width: 100%; border: 1px solid var(--border); border-radius: 11px; background: white; padding: 12px; color: var(--ink); font-size: 13px; }
+    textarea { min-height: 112px; resize: vertical; line-height: 1.5; }
+    label { display: block; font-size: 12px; font-weight: 700; margin: 0 0 6px; }
+    .field { margin-top: 13px; }
+    .phone-field { display: flex; border: 1px solid var(--border); border-radius: 11px; overflow: hidden; background: white; }
+    .phone-prefix { padding: 0 11px; min-height: 45px; display: flex; align-items: center; background: #F7F1E9; color: var(--espresso); font-weight: 700; font-size: 13px; border-right: 1px solid var(--border); }
+    .phone-field input { border: 0; min-width: 0; flex: 1; padding: 11px; outline: 0; }
+    .phone-error { color: var(--danger); font-size: 11px; margin-top: 5px; min-height: 14px; }
+    .bottom-nav { position: fixed; z-index: 20; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 430px); padding: 7px 7px calc(7px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(5,1fr); background: rgba(255,255,255,.97); border-top: 1px solid var(--border); box-shadow: 0 -7px 22px rgba(67,45,28,.06); backdrop-filter: blur(12px); }
+    .bottom-nav.customer-nav { grid-template-columns: repeat(3,1fr); }
+    .bottom-nav.admin-nav { grid-template-columns: repeat(4,1fr); }
+    .bottom-nav[hidden], .app-header .home-button[hidden] { display: none; }
+    .nav-item { border: 0; background: transparent; min-height: 58px; color: var(--muted); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; font-size: 10px; font-weight: 650; }
+    .nav-item .nav-icon { font-size: 18px; line-height: 1; }
+    .nav-item.active { color: var(--espresso); background: #F7F1E9; }
+    .table-banner { padding: 16px; border-radius: 17px; color: white; background: linear-gradient(125deg,#6F4E37,#8C6343); display: flex; align-items: center; justify-content: space-between; margin-bottom: 19px; box-shadow: 0 8px 18px rgba(111,78,55,.18); }
+    .table-banner strong { font-size: 19px; display: block; }
+    .table-banner .subtle { color: rgba(255,255,255,.78); margin-top: 3px; }
+    .table-controls { display: flex; align-items: center; gap: 7px; }
+    .table-controls select { width: 72px; min-height: 40px; padding: 8px; font-size: 12px; }
+    .category-title { margin: 19px 0 9px; display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--espresso); font-weight: 750; }
+    .menu-item { padding: 12px 0; border-bottom: 1px solid #F3ECE3; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .menu-item:last-child { border-bottom: 0; }
+    .item-name { font-size: 13px; font-weight: 700; }
+    .item-price { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .stepper { display: flex; align-items: center; gap: 8px; }
+    .stepper button { width: 34px; height: 34px; border: 1px solid var(--border); background: #fff; color: var(--espresso); border-radius: 10px; font-weight: 800; font-size: 17px; }
+    .stepper b { min-width: 12px; text-align: center; font-size: 13px; }
+    .cart-dock { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%); z-index: 10; width: min(calc(100% - 24px), 406px); background: var(--espresso); color: white; border-radius: 15px; padding: 11px 12px 11px 16px; box-shadow: 0 10px 24px rgba(51,34,21,.25); display: flex; justify-content: space-between; align-items: center; }
+    .cart-dock .btn { min-height: 40px; background: #fff; color: var(--espresso); }
+    .cart-dock[hidden] { display: none; }
+    .stamp-hero { padding: 20px 15px; text-align: center; background: linear-gradient(145deg,#fff,#FBF3E8); }
+    .stamp-circles { display: flex; justify-content: center; gap: 8px; margin: 19px 0 14px; }
+    .stamp-circle { width: 49px; height: 49px; border: 1.5px dashed #D9C6AF; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: #D0B99F; background: #FFFCF8; position: relative; }
+    .stamp-circle.filled { border-style: solid; border-color: #9BC2A5; background: #EAF4EC; color: var(--green); }
+    .stamp-circle.reward-slot { font-size: 9px; font-weight: 800; color: var(--caramel); border-color: var(--caramel); }
+    .stamp-circle.reward-slot.filled { color: white; background: var(--caramel); border-color: var(--caramel); }
+    .progress-track { height: 7px; border-radius: 9px; background: #EFE7DE; overflow: hidden; margin-top: 14px; }
+    .progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--caramel); transition: width .2s ease; }
+    .customer-row { display: flex; align-items: center; justify-content: space-between; gap: 9px; padding: 11px 0; border-bottom: 1px solid #F3ECE3; }
+    .customer-row:last-child { border-bottom: 0; }
+    .avatar { width: 38px; height: 38px; border-radius: 13px; background: #F4EBDD; display: grid; place-items: center; font-weight: 800; color: var(--espresso); flex: 0 0 auto; }
+    .customer-name { font-size: 13px; font-weight: 750; }
+    .reward-card { background: linear-gradient(140deg,#6F4E37,#99734F); color: white; border-radius: 17px; padding: 17px; position: relative; overflow: hidden; }
+    .reward-card:after { content: "☕"; position: absolute; right: 12px; top: 16px; opacity: .13; font-size: 72px; transform: rotate(12deg); }
+    .reward-code { display: inline-block; border: 1px dashed rgba(255,255,255,.65); border-radius: 8px; padding: 8px 11px; margin-top: 15px; font-weight: 800; letter-spacing: 1.2px; }
+    .review-cta { min-height: 54px; font-size: 14px; }
+    .message-preview { background: #F7F1E9; border-radius: 12px; padding: 12px; color: #5D4D3D; font-size: 12px; line-height: 1.55; margin: 12px 0; }
+    .automation { padding: 13px 0; border-bottom: 1px solid #F3ECE3; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .automation:last-child { border-bottom: 0; padding-bottom: 0; }
+    .automation-title { font-size: 12px; font-weight: 700; line-height: 1.4; }
+    .switch { appearance: none; width: 44px; height: 26px; border-radius: 99px; background: #D9D0C6; position: relative; transition: background .15s; flex: 0 0 auto; cursor: pointer; margin: 0; }
+    .switch:after { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; border-radius: 50%; background: white; box-shadow: 0 1px 3px #0002; transition: transform .15s; }
+    .switch:checked { background: var(--green); }
+    .switch:checked:after { transform: translateX(18px); }
+    .kpi-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .kpi { padding: 14px; min-height: 100px; }
+    .kpi-label { color: var(--muted); font-size: 11px; font-weight: 650; }
+    .kpi-value { font-size: 23px; font-weight: 800; letter-spacing: -.6px; margin-top: 8px; }
+    .kpi-note { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .bar-chart { height: 142px; display: flex; align-items: flex-end; justify-content: space-around; gap: 8px; padding-top: 15px; border-bottom: 1px solid var(--border); }
+    .chart-column { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; }
+    .chart-bar { width: min(26px,80%); min-height: 3px; border-radius: 7px 7px 2px 2px; background: linear-gradient(180deg,#D9A35F,#C8873A); position: relative; }
+    .chart-count { position: absolute; top: -17px; width: 100%; text-align: center; color: var(--muted); font-size: 9px; }
+    .chart-day { font-size: 9px; color: var(--muted); padding-bottom: 7px; }
+    .rank-item { display: grid; grid-template-columns: 19px 1fr 30px; gap: 8px; align-items: center; margin: 13px 0; font-size: 12px; }
+    .rank-track { height: 6px; background: #F2ECE5; border-radius: 8px; overflow: hidden; margin-top: 5px; }
+    .rank-track span { display: block; height: 100%; background: var(--caramel); border-radius: inherit; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+    th { text-align: left; color: var(--muted); font-weight: 700; padding: 9px 7px; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 7px; border-bottom: 1px solid #F3ECE3; }
+    .empty { text-align: center; padding: 22px 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .footer { margin-top: 25px; padding: 15px 3px 4px; text-align: center; }
+    .footer .btn { margin-top: 8px; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center; background: rgba(36,27,19,.45); padding: 14px; }
+    .modal-backdrop[hidden] { display: none; }
+    .modal { width: min(100%, 430px); max-height: min(84vh,760px); overflow: auto; background: var(--cream); border-radius: 22px 22px 16px 16px; padding: 18px 17px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 20px 60px rgba(0,0,0,.2); animation: slide .18s ease-out; }
+    @keyframes slide { from { transform: translateY(25px); opacity: .65; } to { transform: none; opacity: 1; } }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .modal-x { width: 36px; height: 36px; border: 0; border-radius: 50%; background: #EFE7DE; color: var(--espresso); font-size: 18px; }
+    .cart-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .toast { position: fixed; z-index: 70; left: 50%; bottom: 94px; transform: translate(-50%,15px); opacity: 0; pointer-events: none; background: #2B2118; color: white; border-radius: 12px; padding: 11px 15px; font-size: 12px; font-weight: 650; box-shadow: 0 8px 22px #0003; transition: opacity .2s, transform .2s; width: max-content; max-width: calc(100vw - 32px); }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+    .success-mark { width: 70px; height: 70px; margin: 8px auto 16px; border-radius: 50%; background: #EAF4EC; color: var(--green); display: grid; place-items: center; font-size: 34px; }
+    .success-screen { text-align: center; padding: 35px 5px 20px; }
+    .success-screen h1 { font-size: 24px; }
+    .success-order { margin: 20px 0; padding: 14px; background: white; border-radius: 14px; color: var(--espresso); font-weight: 800; font-size: 19px; }
+    .confetti { position: fixed; z-index: 80; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+    .confetti i { position: absolute; top: -15px; width: 8px; height: 12px; animation: fall 1.7s ease-in forwards; border-radius: 2px; }
+    @keyframes fall { to { transform: translateY(105vh) rotate(680deg); opacity: .25; } }
+    .inline-hint { display: flex; gap: 8px; align-items: center; padding: 10px; border-radius: 11px; color: var(--espresso); background: #F7F1E9; font-size: 11px; line-height: 1.45; }
+    .welcome-screen { padding-top: 34px; }
+    .welcome-hero { text-align: center; padding: 18px 12px 25px; }
+    .welcome-logo { width: 76px; height: 76px; border-radius: 25px; background: var(--espresso); color: white; margin: 0 auto 17px; display: grid; place-items: center; font-size: 38px; box-shadow: 0 10px 24px rgba(111,78,55,.2); }
+    .role-choice { display: grid; gap: 13px; }
+    .role-card { width: 100%; min-height: 112px; border: 1px solid var(--border); border-radius: 18px; background: white; color: var(--ink); padding: 18px; text-align: left; box-shadow: var(--shadow); display: flex; align-items: center; gap: 15px; }
+    a.role-card { text-decoration: none; }
+    .role-card:active { transform: scale(.99); }
+    .role-icon { width: 52px; height: 52px; flex: 0 0 auto; border-radius: 16px; display: grid; place-items: center; background: #F6EDE2; font-size: 25px; }
+    .role-copy { flex: 1; }
+    .role-copy strong { display: block; font-size: 16px; }
+    .role-copy span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .role-arrow { color: var(--caramel); font-size: 22px; font-weight: 700; }
+    .customer-mode .staff-only { display: none !important; }
+    .customer-mode #stampCustomerList, .customer-mode #stampCustomerCount { display: none; }
+    .customer-mode .staff-review-message { display: none; }
+    .role-badge { margin: 0 16px 3px; }
+    @media (min-width: 431px) {
+      body { padding: 18px 0; }
+      .app { min-height: calc(100vh - 36px); border-radius: 23px; overflow: hidden; box-shadow: 0 8px 50px rgba(67,45,28,.13); }
+      .bottom-nav { bottom: 18px; border-radius: 0 0 23px 23px; }
+      .cart-dock { bottom: 101px; }
+      .toast { bottom: 111px; }
+    }
+    @media (max-width: 360px) {
+      main { padding-left: 12px; padding-right: 12px; }
+      .stamp-circle { width: 43px; height: 43px; }
+      .table-banner { padding: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">☕</div><div class="brand-name">Brew &amp; Bean Café</div></div>
+      <button class="btn small soft home-button" id="homeButton" type="button" hidden>← Home</button>
+      <div class="tab-title" id="headerTabTitle">Welcome</div>
+    </header>
+    <main>
+      <section class="screen active welcome-screen" id="screen-home" aria-label="Choose a portal">
+        <div class="welcome-hero">
+          <div class="welcome-logo" aria-hidden="true">☕</div>
+          <h1>Welcome to Brew &amp; Bean</h1>
+          <p class="subtle" style="margin-top:7px">How would you like to continue?</p>
+        </div>
+        <div class="role-choice">
+          <a class="role-card" id="enterCustomer" href="client.html">
+            <span class="role-icon" aria-hidden="true">🛍️</span>
+            <span class="role-copy"><strong>Customer</strong><span>Browse the menu, place an order, and check your coffee rewards.</span></span>
+            <span class="role-arrow" aria-hidden="true">›</span>
+          </a>
+          <a class="role-card" id="enterAdmin" href="admin.html">
+            <span class="role-icon" aria-hidden="true">📋</span>
+            <span class="role-copy"><strong>Admin</strong><span>Manage stamps and rewards, customer offers, and cafe reports.</span></span>
+            <span class="role-arrow" aria-hidden="true">›</span>
+          </a>
+        </div>
+      </section>
+      <section class="screen" id="screen-order" aria-label="Order">
+        <div id="orderContent">
+          <div class="table-banner">
+            <div><strong id="tableBannerTitle">Table 5</strong><div class="subtle">Ready for your order</div></div>
+            <div class="table-controls">
+              <select id="tableSelect" aria-label="Select table"></select>
+              <button class="btn small outline" id="scanButton" type="button">▦ Scan QR</button>
+            </div>
+          </div>
+          <div id="menuContainer"></div>
+        </div>
+        <div id="orderSuccess" class="success-screen" hidden></div>
+      </section>
+      <section class="screen" id="screen-stamps" aria-label="Stamps">
+        <div class="role-badge"><span class="pill" id="stampRoleLabel">Staff loyalty tools</span></div>
+        <div class="section-heading"><div><h1 id="stampHeading">Coffee Stamps</h1><p class="subtle" id="stampDescription">Every coffee brings you closer to a free one.</p></div></div>
+        <div class="field"><label for="stampSearch">Find a customer</label><input id="stampSearch" class="input" placeholder="Search name or WhatsApp number"></div>
+        <div id="stampCustomerPicker" class="card stack" style="margin-top:11px;padding:8px 14px"></div>
+        <div id="stampDetail" style="margin-top:12px"></div>
+        <div class="section-heading" id="stampCustomerListSection"><h2>All customers</h2><span class="subtle" id="stampCustomerCount"></span></div>
+        <div class="card" id="stampCustomerList" style="padding:6px 14px"></div>
+      </section>
+      <section class="screen" id="screen-rewards" aria-label="Reward and review">
+        <div class="role-badge"><span class="pill" id="rewardRoleLabel">Staff reward tools</span></div>
+        <div class="section-heading"><div><h1>Reward + Review</h1><p class="subtle">A little thank-you for every visit.</p></div></div>
+        <div class="field"><label for="rewardCustomerSelect" id="rewardCustomerLabel">Selected customer</label><select id="rewardCustomerSelect" class="input"></select></div>
+        <div id="rewardPanel" style="margin-top:13px"></div>
+        <div class="section-heading"><h2>Share your experience</h2></div>
+        <button id="reviewButton" type="button" class="btn full review-cta">Leave a Google Review ⭐</button>
+        <p class="subtle" style="text-align:center;margin-top:8px">Opens our review page in a new tab.</p>
+        <div class="section-heading staff-review-message"><h2>Review message after 2nd visit</h2></div>
+        <div class="card staff-review-message">
+          <p class="subtle">A friendly WhatsApp message is ready for a customer after their second visit.</p>
+          <div id="reviewMessagePreview" class="message-preview"></div>
+          <button id="sendReviewMessage" class="btn outline full" type="button">Send WhatsApp Message</button>
+        </div>
+      </section>
+      <section class="screen" id="screen-comeback" aria-label="Come back">
+        <div class="section-heading"><div><h1>Come Back</h1><p class="subtle" id="lapsedSummary"></p></div></div>
+        <div id="lapsedCustomerList" class="stack"></div>
+        <div class="section-heading"><h2>Offer message</h2></div>
+        <div class="card">
+          <p class="subtle">Personalized for each lapsed customer. Update the copy before sending.</p>
+          <textarea id="offerMessage" aria-label="Offer message"></textarea>
+          <div class="subtle" style="margin:7px 0 12px">{name}, {favourite}, and {date} are filled in for each customer.</div>
+          <button class="btn whatsapp full" id="sendAllOffers" type="button">☘ Send WhatsApp Offer to All (4)</button>
+        </div>
+        <div class="section-heading"><h2>Automations</h2><span class="pill green">Demo mode</span></div>
+        <div class="card" id="automationList"></div>
+        <div id="birthdayList" style="margin-top:10px"></div>
+      </section>
+      <section class="screen" id="screen-dashboard" aria-label="Dashboard">
+        <div class="section-heading"><div><h1>Owner Dashboard</h1><p class="subtle">A live view of your cafe.</p></div><span class="pill">DEMO</span></div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="section-heading"><h2>Orders · last 7 days</h2><span class="subtle">Daily totals</span></div>
+        <div class="card"><div class="bar-chart" id="ordersChart"></div><p class="subtle" id="chartSummary" style="text-align:center;margin-top:11px"></p></div>
+        <div class="section-heading"><h2>Top Items</h2><span class="subtle">All-time order count</span></div>
+        <div class="card" id="topItems"></div>
+        <div class="section-heading"><h2>Offers</h2></div>
+        <div class="card" id="offerStats"></div>
+        <div class="section-heading"><h2>Reviews</h2></div>
+        <div class="card" id="reviewStats"></div>
+      </section>
+      <footer class="footer" id="appFooter">
+        <p class="subtle">CafeDesk · Demo data only · No real messages are sent</p>
+        <button id="resetDemo" class="btn danger-soft small" type="button">Reset demo data</button>
+      </footer>
+    </main>
+    <div class="cart-dock" id="cartDock" hidden>
+      <div><strong id="cartDockCount">0 items</strong><div class="tiny" id="cartDockTotal"></div></div>
+      <button class="btn" type="button" id="viewCartButton">View Cart →</button>
+    </div>
+    <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation" hidden>
+      <button class="nav-item" data-tab="order" type="button"><span class="nav-icon">🛍️</span>Order</button>
+      <button class="nav-item" data-tab="stamps" type="button"><span class="nav-icon">☕</span><span class="nav-label">Stamps</span></button>
+      <button class="nav-item" data-tab="rewards" type="button"><span class="nav-icon">🎁</span><span class="nav-label">Reward</span></button>
+      <button class="nav-item" data-tab="comeback" type="button"><span class="nav-icon">💬</span><span class="nav-label">Come Back</span></button>
+      <button class="nav-item" data-tab="dashboard" type="button"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></button>
+    </nav>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" id="modalContent" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <script>
+    "use strict";
+
+    // Replace this placeholder with the cafe's Google Review URL.
+    const GOOGLE_REVIEW_URL = "https://www.google.com/search?q=Brew+%26+Bean+Cafe+reviews";
+    const STORAGE_KEY = "cafedesk-demo-v1";
+    const MENU = [
+      { id: "cappuccino", name: "Cappuccino", category: "Coffee", price: 450, is_coffee: true },
+      { id: "latte", name: "Latte", category: "Coffee", price: 480, is_coffee: true },
+      { id: "cold-coffee", name: "Cold Coffee", category: "Coffee", price: 420, is_coffee: true },
+      { id: "espresso", name: "Espresso", category: "Coffee", price: 300, is_coffee: true },
+      { id: "cold-brew", name: "Cold Brew", category: "Coffee", price: 500, is_coffee: true },
+      { id: "doodh-patti", name: "Doodh Patti Chai", category: "Tea", price: 150, is_coffee: false },
+      { id: "kashmiri-chai", name: "Kashmiri Chai", category: "Tea", price: 250, is_coffee: false },
+      { id: "chicken-sandwich", name: "Chicken Sandwich", category: "Snacks", price: 550, is_coffee: false },
+      { id: "zinger-wrap", name: "Zinger Wrap", category: "Snacks", price: 600, is_coffee: false },
+      { id: "cheese-fries", name: "Cheese Fries", category: "Snacks", price: 400, is_coffee: false },
+      { id: "brownie", name: "Chocolate Brownie", category: "Desserts", price: 350, is_coffee: false },
+      { id: "banana-bread", name: "Banana Bread", category: "Desserts", price: 300, is_coffee: false }
+    ];
+    const CUSTOMER_SEEDS = [
+      ["Ahmed","3001234567",8,38,"Latte","1992-03-16",3,false,false],
+      ["Ayesha","3012345678",6,30,"Cappuccino","1995-11-18",2,false,false],
+      ["Hassan","3023456789",4,25,"Cold Coffee","1990-06-03",4,false,true],
+      ["Fatima","3034567890",5,23,"Doodh Patti Chai","1997-11-25",1,false,false],
+      ["Usman","3045678901",7,1,"Espresso","1989-02-11",2,false,true],
+      ["Zainab","3056789012",3,3,"Latte","1998-09-28",4,false,false],
+      ["Bilal","3067890123",9,5,"Zinger Wrap","1993-04-04",3,true,false],
+      ["Hira","3078901234",2,6,"Kashmiri Chai","2000-12-19",1,false,false],
+      ["Ali","3089012345",1,7,"Cold Brew","1991-08-22",0,false,false],
+      ["Maryam","3090123456",1,0,"Chocolate Brownie","1999-01-30",2,false,false],
+      ["Hamza","3101234567",1,0,"Chicken Sandwich","1996-07-14",0,false,false],
+      ["Sana","3112345678",1,2,"Banana Bread","2001-05-09",1,false,false]
+    ];
+    const AUTOMATIONS = [
+      { id: "comeback21", title: "Come-back offer after 21 days of no visit" },
+      { id: "birthday", title: "Birthday special offer" },
+      { id: "review2", title: "Google review message after the 2nd visit" }
+    ];
+    const DEFAULT_OFFER = "Hi {name}! We miss you at Brew & Bean ☕ Come back this week and get a FREE {favourite} with any order. Show this message at the counter. Valid till {date}.";
+    const TAB_TITLES = { order: "Order", stamps: "Stamps", rewards: "Reward + Review", comeback: "Come Back", dashboard: "Dashboard" };
+    const state = loadState();
+    let activeTab = "home";
+    let currentPortal = null;
+    let selectedStampCustomerId = state.customers[0]?.id || "";
+    let cart = {};
+    let selectedTable = 5;
+    let toastTimer;
+    let offerFlow = null;
+    let lastOrderId = "";
+    let lastRewardCustomerId = "";
+
+    function localDate(date = new Date()) {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+    function daysAgo(days, hour = 13) {
+      const d = new Date();
+      d.setDate(d.getDate() - days);
+      d.setHours(hour, (days * 11) % 60, 0, 0);
+      return d.toISOString();
+    }
+    function randomCode() {
+      return `CAFE-${Math.random().toString(36).slice(2, 4).toUpperCase()}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
+    }
+    function makeSeed() {
+      const customers = CUSTOMER_SEEDS.map((row, i) => ({
+        id: `customer-${i + 1}`, name: row[0], whatsapp: row[1], visits: row[2],
+        lastVisit: daysAgo(row[3]), favourite: row[4], birthday: row[5], stamps: row[6],
+        reviewAsked: row[7], isNew: row[8], offerSent: false
+      }));
+      const orders = [];
+      for (let i = 0; i < 30; i++) {
+        const dayOffset = i < 8 ? 0 : (i - 8) % 13 + 1;
+        const customer = customers[(i * 5 + 2) % customers.length];
+        const itemCount = i % 4 === 0 ? 2 : 1;
+        const items = [];
+        for (let j = 0; j < itemCount; j++) {
+          const item = MENU[(i * 3 + j * 5 + (i % 3)) % MENU.length];
+          items.push({ id: item.id, name: item.name, quantity: j === 0 && i % 4 === 0 ? 2 : 1, price: item.price });
+        }
+        orders.push({
+          id: `seed-${String(i + 1).padStart(3, "0")}`,
+          table: i % 12 + 1,
+          items,
+          amount: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+          customerId: customer.id,
+          customerName: customer.name,
+          timestamp: daysAgo(dayOffset, 9 + (i * 2) % 11)
+        });
+      }
+      const now = new Date();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      customers[1].birthday = `${now.getFullYear() - 31}-${month}-18`;
+      customers[3].birthday = `${now.getFullYear() - 29}-${month}-25`;
+      return {
+        customers,
+        orders,
+        rewards: [
+          { id: "reward-seed-1", customerId: "customer-2", code: "CAFE-7K2M", createdAt: daysAgo(3), redeemed: false, redeemedAt: null },
+          { id: "reward-seed-2", customerId: "customer-7", code: "CAFE-4P9Q", createdAt: daysAgo(45), redeemed: true, redeemedAt: daysAgo(40) }
+        ],
+        offers: [
+          { id: "campaign-1", date: daysAgo(36), type: "Come-back offer", sent: 8, cameBack: 2 },
+          { id: "campaign-2", date: daysAgo(22), type: "Birthday special", sent: 6, cameBack: 2 },
+          { id: "campaign-3", date: daysAgo(9), type: "Come-back offer", sent: 10, cameBack: 3 }
+        ],
+        reviews: [],
+        automations: { comeback21: true, birthday: true, review2: true },
+        offerMessage: DEFAULT_OFFER,
+        nextOrderNumber: 1041
+      };
+    }
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.customers) && Array.isArray(parsed.orders)) return parsed;
+        }
+      } catch (error) {
+        console.error("Could not load CafeDesk demo data:", error);
+      }
+      return makeSeed();
+    }
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (error) {
+        console.error("Could not save CafeDesk demo data:", error);
+        showToast("Could not save changes on this device");
+      }
+    }
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+    function money(value) { return `Rs ${Number(value || 0).toLocaleString("en-PK")}`; }
+    function phoneLabel(phone) {
+      const digits = String(phone || "").replace(/\D/g, "");
+      return `+92 ${digits.slice(0, 3)} ${digits.slice(3)}`;
+    }
+    function dateLabel(date, options = { day: "numeric", month: "short" }) {
+      if (!date) return "No visit yet";
+      return new Date(date).toLocaleDateString("en-PK", options);
+    }
+    function daysSince(date) {
+      if (!date) return Infinity;
+      return Math.max(0, Math.floor((new Date(localDate()).getTime() - new Date(localDate(date)).getTime()) / 86400000));
+    }
+    function waLink(phone, text) {
+      const digits = String(phone || "").replace(/\D/g, "");
+      const number = digits.startsWith("92") ? digits : `92${digits.replace(/^0/, "")}`;
+      return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+    }
+    function validatePhone(value) { return /^3\d{9}$/.test(String(value).replace(/\D/g, "")); }
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+    function setTab(tab) {
+      const customerTabs = ["order", "stamps", "rewards"];
+      const adminTabs = ["stamps", "rewards", "comeback", "dashboard"];
+      if (!currentPortal || (currentPortal === "customer" && !customerTabs.includes(tab)) || (currentPortal === "admin" && !adminTabs.includes(tab))) return;
+      activeTab = tab;
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.toggle("active", screen.id === `screen-${tab}`));
+      document.querySelectorAll(".nav-item").forEach(button => button.classList.toggle("active", button.dataset.tab === tab));
+      document.getElementById("headerTabTitle").textContent = TAB_TITLES[tab];
+      renderCartDock();
+      if (tab === "order") renderMenu();
+      if (tab === "stamps") renderStamps();
+      if (tab === "rewards") renderRewards();
+      if (tab === "comeback") renderComeback();
+      if (tab === "dashboard") renderDashboard();
+    }
+    function setPortal(portal) {
+      currentPortal = portal;
+      if (portal === "customer") selectedStampCustomerId = "";
+      document.body.classList.toggle("customer-mode", portal === "customer");
+      document.body.classList.toggle("admin-mode", portal === "admin");
+      const bottomNav = document.getElementById("bottomNav");
+      bottomNav.hidden = false;
+      bottomNav.classList.toggle("customer-nav", portal === "customer");
+      bottomNav.classList.toggle("admin-nav", portal === "admin");
+      document.getElementById("appFooter").hidden = portal !== "admin";
+      document.getElementById("resetDemo").hidden = portal !== "admin";
+      document.querySelectorAll(".nav-item").forEach(button => {
+        const customerVisible = ["order", "stamps", "rewards"].includes(button.dataset.tab);
+        button.hidden = portal === "customer" ? !customerVisible : button.dataset.tab === "order";
+      });
+      document.querySelector('[data-tab="stamps"] .nav-label').textContent = portal === "customer" ? "My Stamps" : "Stamps";
+      document.querySelector('[data-tab="rewards"] .nav-label').textContent = portal === "customer" ? "My Rewards" : "Rewards";
+      document.getElementById("stampRoleLabel").textContent = portal === "customer" ? "Customer loyalty" : "Staff loyalty tools";
+      document.getElementById("stampHeading").textContent = portal === "customer" ? "Your Coffee Stamps" : "Coffee Stamps";
+      document.getElementById("stampDescription").textContent = portal === "customer" ? "Choose your demo profile to see your progress." : "Every coffee brings you closer to a free one.";
+      document.getElementById("rewardRoleLabel").textContent = portal === "customer" ? "Your rewards" : "Staff reward tools";
+      document.getElementById("rewardCustomerLabel").textContent = portal === "customer" ? "Your demo profile" : "Selected customer";
+      document.getElementById("stampSearch").placeholder = portal === "customer" ? "Find your demo profile by name or number" : "Search name or WhatsApp number";
+      document.getElementById("headerTabTitle").textContent = portal === "customer" ? "Customer" : "Admin";
+      isolatePortalScreens(portal);
+      renderStamps();
+      renderRewards();
+      setTab(portal === "customer" ? "order" : "stamps");
+    }
+    function isolatePortalScreens(portal) {
+      const allowed = portal === "customer"
+        ? new Set(["screen-order", "screen-stamps", "screen-rewards"])
+        : new Set(["screen-stamps", "screen-rewards", "screen-comeback", "screen-dashboard"]);
+      document.querySelectorAll(".screen").forEach(screen => {
+        if (!allowed.has(screen.id)) screen.remove();
+      });
+      document.getElementById("homeButton")?.remove();
+      if (portal === "customer") {
+        document.querySelector('[data-tab="comeback"]')?.remove();
+        document.querySelector('[data-tab="dashboard"]')?.remove();
+        document.getElementById("appFooter")?.remove();
+        document.getElementById("stampCustomerListSection")?.remove();
+        document.getElementById("stampCustomerList")?.remove();
+        document.getElementById("stampCustomerCount")?.remove();
+      } else {
+        document.querySelector('[data-tab="order"]')?.remove();
+        document.getElementById("screen-order")?.remove();
+        document.getElementById("cartDock")?.remove();
+      }
+    }
+    function showHome() {
+      currentPortal = null;
+      activeTab = "home";
+      document.body.classList.remove("customer-mode");
+      document.body.classList.remove("admin-mode");
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.toggle("active", screen.id === "screen-home"));
+      document.getElementById("bottomNav").hidden = true;
+      document.getElementById("homeButton").hidden = true;
+      document.getElementById("appFooter").hidden = true;
+      document.getElementById("headerTabTitle").textContent = "Welcome";
+      document.getElementById("resetDemo").hidden = true;
+      renderCartDock();
+    }
+    function renderMenu() {
+      document.getElementById("tableBannerTitle").textContent = `Table ${selectedTable}`;
+      const categories = ["Coffee", "Tea", "Snacks", "Desserts"];
+      document.getElementById("menuContainer").innerHTML = categories.map(category => `
+        <div class="category-title">${category === "Coffee" ? "☕" : category === "Tea" ? "🫖" : category === "Snacks" ? "🥪" : "🍰"} ${category}</div>
+        <div class="card" style="padding:4px 14px">
+          ${MENU.filter(item => item.category === category).map(item => {
+            const count = cart[item.id] || 0;
+            return `<div class="menu-item"><div><div class="item-name">${escapeHTML(item.name)}</div><div class="item-price">${money(item.price)}${item.is_coffee ? ' <span class="pill gold" style="padding:3px 6px;font-size:9px">Stamp eligible</span>' : ""}</div></div>
+              ${count ? `<div class="stepper"><button type="button" data-cart="remove" data-id="${item.id}" aria-label="Remove one ${escapeHTML(item.name)}">−</button><b>${count}</b><button type="button" data-cart="add" data-id="${item.id}" aria-label="Add one ${escapeHTML(item.name)}">+</button></div>` : `<button class="btn small outline" type="button" data-cart="add" data-id="${item.id}">Add</button>`}
+            </div>`;
+          }).join("")}
+        </div>`).join("");
+      document.getElementById("menuContainer").querySelectorAll("[data-cart]").forEach(button => button.addEventListener("click", () => {
+        const id = button.dataset.id;
+        const item = MENU.find(menuItem => menuItem.id === id);
+        cart[id] = Math.max(0, (cart[id] || 0) + (button.dataset.cart === "add" ? 1 : -1));
+        if (!cart[id]) delete cart[id];
+        renderMenu();
+        renderCartDock();
+        showToast(`${button.dataset.cart === "add" ? "Added" : "Removed"} ${item.name} ${button.dataset.cart === "add" ? "to" : "from"} cart`);
+      }));
+    }
+    function cartCount() { return Object.values(cart).reduce((sum, value) => sum + value, 0); }
+    function cartTotal() { return MENU.reduce((sum, item) => sum + item.price * (cart[item.id] || 0), 0); }
+    function renderCartDock() {
+      const dock = document.getElementById("cartDock");
+      if (!dock) return;
+      dock.hidden = activeTab !== "order" || cartCount() === 0 || document.getElementById("orderSuccess").hidden === false;
+      document.getElementById("cartDockCount").textContent = `${cartCount()} ${cartCount() === 1 ? "item" : "items"}`;
+      document.getElementById("cartDockTotal").textContent = money(cartTotal());
+    }
+    function openModal(content) {
+      const modal = document.getElementById("modalContent");
+      modal.innerHTML = content;
+      document.getElementById("modalBackdrop").hidden = false;
+      const close = modal.querySelectorAll("[data-close-modal]");
+      close.forEach(button => button.addEventListener("click", closeModal));
+    }
+    function closeModal() { document.getElementById("modalBackdrop").hidden = true; }
+    function renderCartModal() {
+      if (!cartCount()) return showToast("Add an item to your cart first");
+      openModal(`
+        <div class="modal-head"><h2 id="modalTitle">Your order</h2><button class="modal-x" type="button" aria-label="Close" data-close-modal>×</button></div>
+        <div id="cartLines">${MENU.filter(item => cart[item.id]).map(item => `<div class="cart-line"><span>${escapeHTML(item.name)} × ${cart[item.id]}</span><strong>${money(item.price * cart[item.id])}</strong></div>`).join("")}</div>
+        <div class="row between" style="padding:14px 0;font-weight:800"><span>Total</span><span>${money(cartTotal())}</span></div>
+        <div class="inline-hint">☕ Coffee orders earn one stamp per coffee.</div>
+        <div class="field"><label for="orderName">Customer name</label><input id="orderName" class="input" autocomplete="name" placeholder="e.g. Ayesha"></div>
+        <div class="field"><label for="orderPhone">WhatsApp number</label><div class="phone-field"><span class="phone-prefix">+92</span><input id="orderPhone" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="3XX XXXXXXX"></div><div id="orderPhoneError" class="phone-error"></div></div>
+        <div id="welcomeBack"></div>
+        <button class="btn full" type="button" style="margin-top:8px" id="placeOrderButton">Place Order · ${money(cartTotal())}</button>`);
+      const phone = document.getElementById("orderPhone");
+      phone.addEventListener("input", () => {
+        phone.value = phone.value.replace(/\D/g, "").slice(0, 10);
+        const customer = state.customers.find(item => item.whatsapp === phone.value);
+        if (customer) {
+          document.getElementById("orderName").value = customer.name;
+          document.getElementById("welcomeBack").innerHTML = `<div class="inline-hint" style="margin-top:8px">👋 Welcome back, ${escapeHTML(customer.name)}!</div>`;
+        } else {
+          document.getElementById("welcomeBack").innerHTML = "";
+        }
+        document.getElementById("orderPhoneError").textContent = phone.value && !validatePhone(phone.value) ? "Enter 10 digits starting with 3." : "";
+      });
+      document.getElementById("placeOrderButton").addEventListener("click", placeOrder);
+      document.getElementById("orderName").focus();
+    }
+    function makeReward(customerId) {
+      const reward = { id: `reward-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, customerId, code: randomCode(), createdAt: new Date().toISOString(), redeemed: false, redeemedAt: null };
+      state.rewards.unshift(reward);
+      lastRewardCustomerId = customerId;
+      return reward;
+    }
+    function awardStamps(customer, count) {
+      let rewardsCreated = 0;
+      for (let i = 0; i < count; i++) {
+        customer.stamps = (customer.stamps || 0) + 1;
+        if (customer.stamps >= 5) {
+          makeReward(customer.id);
+          customer.stamps = 0;
+          rewardsCreated++;
+        }
+      }
+      return rewardsCreated;
+    }
+    function placeOrder() {
+      const nameInput = document.getElementById("orderName");
+      const phoneInput = document.getElementById("orderPhone");
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.replace(/\D/g, "");
+      document.getElementById("orderPhoneError").textContent = validatePhone(phone) ? "" : "Enter 10 digits starting with 3.";
+      if (!name) { nameInput.focus(); return showToast("Please enter a customer name"); }
+      if (!validatePhone(phone)) { phoneInput.focus(); return; }
+      let customer = state.customers.find(item => item.whatsapp === phone);
+      if (!customer) {
+        customer = { id: `customer-${Date.now()}`, name, whatsapp: phone, visits: 0, lastVisit: null, favourite: MENU.find(item => cart[item.id])?.name || "Cappuccino", birthday: "", stamps: 0, reviewAsked: false, isNew: true, offerSent: false };
+        state.customers.unshift(customer);
+      }
+      customer.name = name;
+      customer.visits = (customer.visits || 0) + 1;
+      customer.lastVisit = new Date().toISOString();
+      selectedStampCustomerId = customer.id;
+      const items = MENU.filter(item => cart[item.id]).map(item => ({ id: item.id, name: item.name, quantity: cart[item.id], price: item.price }));
+      const coffeeCount = items.filter(item => MENU.find(menuItem => menuItem.id === item.id)?.is_coffee).reduce((sum, item) => sum + item.quantity, 0);
+      const rewardsCreated = awardStamps(customer, coffeeCount);
+      const orderNumber = `BB-${state.nextOrderNumber++}`;
+      const order = { id: `order-${Date.now()}`, orderNumber, table: selectedTable, items, amount: items.reduce((sum, item) => sum + item.price * item.quantity, 0), customerId: customer.id, customerName: name, timestamp: new Date().toISOString() };
+      state.orders.unshift(order);
+      lastOrderId = order.id;
+      cart = {};
+      saveState();
+      closeModal();
+      document.getElementById("orderContent").hidden = true;
+      document.getElementById("orderSuccess").hidden = false;
+      document.getElementById("orderSuccess").innerHTML = `<div class="success-mark">✓</div><h1>Order placed!</h1><p class="subtle" style="margin-top:7px">Thanks, ${escapeHTML(name)}. The cafe team has your order.</p><div class="success-order">${orderNumber}</div><p class="subtle">Table ${selectedTable} · ${money(order.amount)}${coffeeCount ? ` · ${coffeeCount} coffee stamp${coffeeCount === 1 ? "" : "s"} added` : ""}</p>${rewardsCreated ? `<div class="inline-hint" style="margin-top:14px;justify-content:center">🎉 ${rewardsCreated} free coffee reward${rewardsCreated > 1 ? "s" : ""} unlocked!</div>` : ""}<button class="btn full" type="button" style="margin-top:20px" id="newOrderButton">Start a new order</button>`;
+      document.getElementById("newOrderButton").addEventListener("click", () => {
+        document.getElementById("orderContent").hidden = false;
+        document.getElementById("orderSuccess").hidden = true;
+        renderMenu(); renderCartDock(); showToast("Ready for the next order");
+      });
+      renderCartDock();
+      showToast("Order saved ✓");
+    }
+    function customerById(id) { return state.customers.find(customer => customer.id === id); }
+    function miniStamps(stamps) {
+      const count = Math.max(0, Math.min(5, Number(stamps) || 0));
+      return `<span class="tiny" style="color:var(--caramel);letter-spacing:1px">${"●".repeat(count)}${"○".repeat(5 - count)}</span>`;
+    }
+    function renderStamps() {
+      const query = document.getElementById("stampSearch").value.trim().toLowerCase();
+      const customerMode = document.body.classList.contains("customer-mode");
+      const filtered = state.customers.filter(customer => `${customer.name} ${customer.whatsapp}`.toLowerCase().includes(query));
+      document.getElementById("stampCustomerPicker").innerHTML = customerMode && !query
+        ? `<div class="empty">Search your name or WhatsApp number to find your stamp card.</div>`
+        : filtered.length ? filtered.slice(0, 5).map(customer => `<button type="button" class="customer-row" data-pick-stamp="${customer.id}" style="width:100%;border:0;background:transparent;text-align:left"><div class="row"><div class="avatar">${escapeHTML(customer.name[0])}</div><div><div class="customer-name">${escapeHTML(customer.name)}</div><div class="subtle">${phoneLabel(customer.whatsapp)}</div></div></div>${miniStamps(customer.stamps)}</button>`).join("") : `<div class="empty">${customerMode ? "No matching profile. Check your name or number." : "No customers match your search."}</div>`;
+      document.querySelectorAll("[data-pick-stamp]").forEach(button => button.addEventListener("click", () => {
+        selectedStampCustomerId = button.dataset.pickStamp;
+        renderStamps();
+        renderRewards();
+      }));
+      let selected = customerById(selectedStampCustomerId);
+      if (customerMode && query && (!selected || !filtered.some(customer => customer.id === selected.id))) selected = filtered[0] || null;
+      if (!customerMode && !selected) selected = state.customers[0];
+      if (selected) {
+        selectedStampCustomerId = selected.id;
+        const count = Math.max(0, Math.min(4, Number(selected.stamps) || 0));
+        document.getElementById("stampDetail").innerHTML = `<div class="card stamp-hero"><div class="row" style="justify-content:center"><div class="avatar">${escapeHTML(selected.name[0])}</div><div><div class="customer-name">${escapeHTML(selected.name)}</div><div class="subtle">${phoneLabel(selected.whatsapp)}</div></div></div>
+          <div class="stamp-circles">${Array.from({ length: 5 }, (_, i) => `<div class="stamp-circle ${i < count ? "filled" : ""} ${i === 4 ? "reward-slot" : ""} ${i === 4 && count === 5 ? "filled" : ""}">${i === 4 ? "FREE" : i < count ? "☕" : "·"}</div>`).join("")}</div>
+          <h2>${selected.stamps}/5 stamps</h2><p class="subtle" style="margin-top:5px">${selected.stamps >= 5 ? "Reward ready!" : `${5 - selected.stamps} more ${5 - selected.stamps === 1 ? "coffee" : "coffees"} for a free one`}</p>
+          <div class="progress-track"><span style="width:${Math.min(100, selected.stamps * 20)}%"></span></div>
+          <button class="btn full staff-only" type="button" style="margin-top:16px" id="addStampButton">☕ Add Stamp</button></div>`;
+        const addStampButton = document.getElementById("addStampButton");
+        if (addStampButton) addStampButton.addEventListener("click", () => {
+          if (selected.stamps >= 5) selected.stamps = 0;
+          const rewards = awardStamps(selected, 1);
+          saveState(); renderStamps(); renderRewards();
+          if (rewards) { celebrate(); showToast("🎉 Free coffee reward unlocked!"); }
+          else showToast("Stamp added ✓");
+        });
+      } else {
+        document.getElementById("stampDetail").innerHTML = `<div class="card empty">Enter your name or WhatsApp number above to view your stamp card.</div>`;
+      }
+      const customerCount = document.getElementById("stampCustomerCount");
+      if (customerCount) customerCount.textContent = `${state.customers.length} total`;
+      const customerList = document.getElementById("stampCustomerList");
+      if (customerList) customerList.innerHTML = state.customers.map(customer => `<button type="button" class="customer-row" data-select-customer="${customer.id}" style="width:100%;border:0;background:transparent;text-align:left"><div class="row"><div class="avatar">${escapeHTML(customer.name[0])}</div><div><div class="customer-name">${escapeHTML(customer.name)}</div><div class="subtle">${customer.visits} visits</div></div></div>${miniStamps(customer.stamps)}</button>`).join("");
+      document.querySelectorAll("[data-select-customer]").forEach(button => button.addEventListener("click", () => {
+        selectedStampCustomerId = button.dataset.selectCustomer;
+        document.getElementById("stampSearch").value = "";
+        renderStamps();
+        renderRewards();
+        document.getElementById("stampDetail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }));
+    }
+    function customerRewards(customerId) {
+      return state.rewards.filter(reward => reward.customerId === customerId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    function renderRewards() {
+      const select = document.getElementById("rewardCustomerSelect");
+      const customerMode = document.body.classList.contains("customer-mode");
+      if (customerMode && !selectedStampCustomerId) {
+        select.innerHTML = `<option value="">Find your profile in My Stamps</option>`;
+        select.value = "";
+        select.disabled = true;
+        document.getElementById("rewardPanel").innerHTML = `<div class="card empty">Look up your profile in My Stamps to see your personal rewards and review link.</div>`;
+        document.getElementById("reviewButton").disabled = true;
+        document.getElementById("reviewMessagePreview").textContent = "Find your profile in My Stamps to continue.";
+        document.getElementById("sendReviewMessage").disabled = true;
+        return;
+      }
+      const current = selectedStampCustomerId || lastRewardCustomerId || select.value || state.customers[0]?.id || "";
+      select.innerHTML = customerMode
+        ? state.customers.filter(customer => customer.id === current).map(customer => `<option value="${customer.id}">${escapeHTML(customer.name)} · ${phoneLabel(customer.whatsapp)}</option>`).join("")
+        : state.customers.map(customer => `<option value="${customer.id}">${escapeHTML(customer.name)} · ${phoneLabel(customer.whatsapp)}</option>`).join("");
+      select.disabled = customerMode;
+      if (state.customers.some(customer => customer.id === current)) select.value = current;
+      const customer = customerById(select.value);
+      if (!customer) return;
+      const reward = customerRewards(customer.id)[0];
+      document.getElementById("rewardPanel").innerHTML = reward ? `<div class="reward-card"><div class="row between"><span class="pill ${reward.redeemed ? "green" : "gold"}">${reward.redeemed ? "Redeemed" : "Unused"}</span><span class="tiny" style="color:#ffffffc7">FREE COFFEE</span></div><h2 style="margin-top:15px;color:white">A coffee on us!</h2><p class="tiny" style="margin-top:5px;color:#ffffffc7">Valid for 30 days · Expires ${dateLabel(new Date(new Date(reward.createdAt).getTime() + 30 * 86400000))}</p><div class="reward-code">${escapeHTML(reward.code)}</div></div>
+        ${reward.redeemed ? `<div class="inline-hint" style="margin-top:10px">✓ Redeemed on ${dateLabel(reward.redeemedAt)}.</div>` : `<button class="btn full staff-only" id="redeemButton" style="margin-top:10px" type="button">Mark as Redeemed</button>`}` : `<div class="card empty">No free coffee reward yet for ${escapeHTML(customer.name)}. Complete five coffee stamps to unlock one.</div>`;
+      const secondVisitText = `Hi ${customer.name}! Thanks for visiting Brew & Bean Café. We hope you enjoyed your coffee ☕ If you have a moment, we'd love your feedback: ${GOOGLE_REVIEW_URL}`;
+      document.getElementById("reviewMessagePreview").textContent = secondVisitText;
+      const reviewButton = document.getElementById("reviewButton");
+      reviewButton.disabled = false;
+      reviewButton.onclick = () => {
+        const reviewTab = window.open(GOOGLE_REVIEW_URL, "_blank", "noopener,noreferrer");
+        if (reviewTab) reviewTab.opener = null;
+        if (!customer.reviewAsked) {
+          customer.reviewAsked = true;
+          state.reviews.unshift({ id: `review-${Date.now()}`, customerId: customer.id, type: "Google review link tapped", timestamp: new Date().toISOString() });
+          saveState();
+        }
+        showToast("Review page opened · request saved");
+        renderDashboard();
+      };
+      document.getElementById("sendReviewMessage").onclick = () => {
+        document.getElementById("sendReviewMessage").disabled = false;
+        if (customer.visits < 2) return showToast("Review message is for customers after visit 2");
+        window.open(waLink(customer.whatsapp, secondVisitText), "_blank", "noopener,noreferrer");
+        customer.reviewAsked = true;
+        state.reviews.unshift({ id: `review-${Date.now()}`, customerId: customer.id, type: "WhatsApp review message sent", timestamp: new Date().toISOString() });
+        saveState();
+        showToast("WhatsApp message opened");
+      };
+      const redeem = document.getElementById("redeemButton");
+      if (redeem) redeem.addEventListener("click", () => {
+        reward.redeemed = true;
+        reward.redeemedAt = new Date().toISOString();
+        saveState(); renderRewards(); renderDashboard(); showToast("Reward marked as redeemed ✓");
+      });
+    }
+    function lapsedCustomers() {
+      return state.customers.filter(customer => daysSince(customer.lastVisit) >= 21).sort((a, b) => daysSince(b.lastVisit) - daysSince(a.lastVisit));
+    }
+    function renderComeback() {
+      const lapsed = lapsedCustomers();
+      document.getElementById("lapsedSummary").textContent = `${state.customers.length} customers · ${lapsed.length} haven't visited in 21+ days`;
+      document.getElementById("sendAllOffers").textContent = `☘ Send WhatsApp Offer to All (${lapsed.length})`;
+      document.getElementById("sendAllOffers").disabled = !lapsed.length;
+      document.getElementById("lapsedCustomerList").innerHTML = lapsed.length ? lapsed.map(customer => `<div class="card"><div class="row between"><div class="row"><div class="avatar">${escapeHTML(customer.name[0])}</div><div><div class="customer-name">${escapeHTML(customer.name)}</div><div class="subtle">${phoneLabel(customer.whatsapp)}</div></div></div><span class="pill red">${daysSince(customer.lastVisit)} days</span></div><div class="row between" style="margin-top:12px"><span class="subtle">Favourite: <strong style="color:var(--ink)">${escapeHTML(customer.favourite)}</strong></span><span class="subtle">Last visit ${dateLabel(customer.lastVisit)}</span></div>${customer.offerSent ? `<div class="tiny" style="color:var(--green);margin-top:9px">✓ Offer sent</div>` : ""}</div>`).join("") : `<div class="card empty">No lapsed customers right now. Your regulars are keeping the cafe busy!</div>`;
+      const offer = document.getElementById("offerMessage");
+      if (offer.value !== state.offerMessage) offer.value = state.offerMessage || DEFAULT_OFFER;
+      offer.oninput = () => { state.offerMessage = offer.value; saveState(); };
+      document.getElementById("automationList").innerHTML = AUTOMATIONS.map(item => `<div class="automation"><span class="automation-title">${escapeHTML(item.title)}</span><input type="checkbox" class="switch" aria-label="${escapeHTML(item.title)}" data-automation="${item.id}" ${state.automations[item.id] ? "checked" : ""}></div>`).join("");
+      document.querySelectorAll("[data-automation]").forEach(toggle => toggle.addEventListener("change", () => {
+        state.automations[toggle.dataset.automation] = toggle.checked;
+        saveState(); showToast(`Automation ${toggle.checked ? "enabled" : "paused"} ✓`);
+      }));
+      const month = new Date().getMonth();
+      const birthdays = state.customers.filter(customer => customer.birthday && new Date(`${customer.birthday}T00:00:00`).getMonth() === month);
+      document.getElementById("birthdayList").innerHTML = `<div class="card"><div class="row between"><h3>Birthdays this month</h3><span class="pill gold">${birthdays.length}</span></div>${birthdays.length ? birthdays.map(customer => `<div class="customer-row"><div class="customer-name">🎂 ${escapeHTML(customer.name)}</div><span class="subtle">${dateLabel(customer.birthday, { day: "numeric", month: "short" })}</span></div>`).join("") : `<div class="empty">No birthdays this month.</div>`}</div>`;
+    }
+    function offerText(customer) {
+      const valid = new Date();
+      valid.setDate(valid.getDate() + 7);
+      return (state.offerMessage || DEFAULT_OFFER)
+        .replace(/\{name\}/gi, customer.name)
+        .replace(/\{favourite\}/gi, customer.favourite || "coffee")
+        .replace(/\{date\}/gi, dateLabel(valid, { day: "numeric", month: "short", year: "numeric" }));
+    }
+    function openOfferConfirmation() {
+      const customers = lapsedCustomers();
+      if (!customers.length) return showToast("No lapsed customers to contact");
+      openModal(`<div class="modal-head"><h2 id="modalTitle">Send WhatsApp offers?</h2><button class="modal-x" type="button" data-close-modal aria-label="Close">×</button></div><div class="inline-hint">This demo opens one WhatsApp chat at a time. You review and send each message yourself.</div><p class="subtle" style="margin-top:12px">${customers.length} lapsed customers will be added to an offer campaign. No messages are sent automatically.</p><div class="row" style="margin-top:17px"><button class="btn outline" type="button" style="flex:1" data-close-modal>Cancel</button><button class="btn whatsapp" id="confirmSendOffers" type="button" style="flex:1">Start campaign</button></div>`);
+      document.getElementById("confirmSendOffers").addEventListener("click", startOfferFlow);
+    }
+    function openCurrentOffer() {
+      if (!offerFlow) return;
+      const customer = offerFlow.customers[offerFlow.index];
+      if (!customer) { offerFlow = null; closeModal(); return; }
+      const link = waLink(customer.whatsapp, offerText(customer));
+      window.open(link, "_blank", "noopener,noreferrer");
+      customer.offerSent = true;
+      saveState();
+      const isLast = offerFlow.index === offerFlow.customers.length - 1;
+      openModal(`<div class="modal-head"><h2 id="modalTitle">${isLast ? "Campaign complete" : "WhatsApp ready"}</h2><button class="modal-x" type="button" data-close-modal aria-label="Close">×</button></div><div class="success-mark" style="width:58px;height:58px;font-size:25px">${isLast ? "✓" : "☘"}</div><h2 style="text-align:center">${isLast ? "All customers queued!" : `Offer ${offerFlow.index + 1} of ${offerFlow.customers.length}`}</h2><p class="subtle" style="text-align:center;margin-top:6px">${isLast ? "Review and send any message left open in WhatsApp." : `WhatsApp opened for ${escapeHTML(customer.name)}. Send it there, then continue here.`}</p><div class="message-preview">${escapeHTML(offerText(customer))}</div>${isLast ? `<button class="btn full" id="finishOffers" type="button">Done</button>` : `<button class="btn whatsapp full" id="nextOffer" type="button">Next customer →</button>`}`);
+      const finish = document.getElementById("finishOffers");
+      if (finish) finish.addEventListener("click", () => { offerFlow = null; closeModal(); renderComeback(); renderDashboard(); showToast("Offer campaign logged ✓"); });
+      const next = document.getElementById("nextOffer");
+      if (next) next.addEventListener("click", () => { offerFlow.index++; openCurrentOffer(); });
+      renderComeback();
+    }
+    function startOfferFlow() {
+      const customers = lapsedCustomers();
+      state.offers.unshift({ id: `campaign-${Date.now()}`, date: new Date().toISOString(), type: "Come-back offer", sent: customers.length, cameBack: 0 });
+      offerFlow = { customers, index: 0 };
+      saveState();
+      openCurrentOffer();
+    }
+    function todayOrders() { return state.orders.filter(order => localDate(order.timestamp) === localDate()); }
+    function renderDashboard() {
+      const repeat = state.customers.filter(customer => customer.visits >= 2).length;
+      const todays = todayOrders();
+      const todayRevenue = todays.reduce((sum, order) => sum + order.amount, 0);
+      const redeemed = state.rewards.filter(reward => reward.redeemed).length;
+      document.getElementById("kpiGrid").innerHTML = `
+        <div class="card kpi"><div class="kpi-label">Repeat Customers</div><div class="kpi-value">${state.customers.length ? Math.round(repeat / state.customers.length * 100) : 0}%</div><div class="kpi-note">${repeat} of ${state.customers.length} customers · 2+ visits</div></div>
+        <div class="card kpi"><div class="kpi-label">Today's Orders</div><div class="kpi-value">${todays.length}</div><div class="kpi-note">${money(todayRevenue)} revenue</div></div>
+        <div class="card kpi"><div class="kpi-label">Total Customers</div><div class="kpi-value">${state.customers.length}</div><div class="kpi-note">Saved in this demo</div></div>
+        <div class="card kpi"><div class="kpi-label">Rewards Redeemed</div><div class="kpi-value">${redeemed}</div><div class="kpi-note">${state.rewards.length} rewards issued</div></div>`;
+      const days = Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(); date.setDate(date.getDate() - (6 - index));
+        const key = localDate(date);
+        return { key, label: date.toLocaleDateString("en-PK", { weekday: "short" }), count: state.orders.filter(order => localDate(order.timestamp) === key).length };
+      });
+      const max = Math.max(1, ...days.map(day => day.count));
+      document.getElementById("ordersChart").innerHTML = days.map(day => `<div class="chart-column"><div class="chart-bar" style="height:${Math.max(3, day.count / max * 100)}%"><span class="chart-count">${day.count}</span></div><span class="chart-day">${day.label}</span></div>`).join("");
+      document.getElementById("chartSummary").textContent = `${days.reduce((sum, day) => sum + day.count, 0)} orders in the last 7 days`;
+      const counts = {};
+      state.orders.forEach(order => order.items.forEach(item => { counts[item.name] = (counts[item.name] || 0) + item.quantity; }));
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const topMax = Math.max(1, ...top.map(item => item[1]));
+      document.getElementById("topItems").innerHTML = top.length ? top.map(([name, count], index) => `<div class="rank-item"><span class="muted">${index + 1}</span><div><div>${escapeHTML(name)}</div><div class="rank-track"><span style="width:${count / topMax * 100}%"></span></div></div><strong>${count}</strong></div>`).join("") : `<div class="empty">Menu items will appear here after orders.</div>`;
+      const sent = state.offers.reduce((sum, offer) => sum + offer.sent, 0);
+      const cameBack = state.offers.reduce((sum, offer) => sum + offer.cameBack, 0);
+      const rate = sent ? Math.round(cameBack / sent * 100) : 0;
+      document.getElementById("offerStats").innerHTML = `<div class="row between"><div><div class="subtle">Offers sent vs came back</div><div style="font-size:21px;font-weight:800;margin-top:5px">${sent} <span class="muted" style="font-size:13px;font-weight:500">sent</span></div></div><div style="text-align:right"><div class="pill green">${cameBack} came back · ${rate}%</div></div></div><div class="progress-track" style="margin-top:13px"><span style="width:${Math.min(100,rate)}%;background:var(--green)"></span></div><div class="section-heading" style="margin:18px 0 5px"><h3>Campaign history</h3></div>${state.offers.length ? `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Campaign</th><th>Sent</th><th>Returned</th></tr></thead><tbody>${state.offers.map(offer => `<tr><td>${dateLabel(offer.date)}</td><td>${escapeHTML(offer.type)}</td><td>${offer.sent}</td><td>${offer.cameBack}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">No campaigns sent yet.</div>`}`;
+      const reviewRequests = state.customers.filter(customer => customer.visits >= 2).length;
+      const taps = state.reviews.length;
+      document.getElementById("reviewStats").innerHTML = `<div class="row between"><div><div class="subtle">Review requests eligible</div><div style="font-size:21px;font-weight:800;margin-top:5px">${reviewRequests}</div></div><div style="text-align:right"><div class="subtle">Review links tapped</div><div style="font-size:21px;font-weight:800;margin-top:5px;color:var(--green)">${taps}</div></div></div><div class="progress-track"><span style="width:${reviewRequests ? Math.min(100, taps / reviewRequests * 100) : 0}%;background:var(--green)"></span></div><p class="subtle" style="margin-top:9px">Eligible customers are those with 2 or more visits. Taps are recorded in this demo.</p>`;
+    }
+    function celebrate() {
+      const root = document.getElementById("confetti");
+      const colors = ["#C8873A", "#2E7D4F", "#E6B85C", "#D7755E", "#8A6BA8"];
+      root.innerHTML = Array.from({ length: 34 }, (_, index) => `<i style="left:${Math.random() * 100}%;background:${colors[index % colors.length]};animation-delay:${Math.random() * .45}s;transform:rotate(${Math.random() * 180}deg)"></i>`).join("");
+      setTimeout(() => { root.innerHTML = ""; }, 2400);
+    }
+    function resetDemo() {
+      if (!window.confirm("Reset CafeDesk to the original sample data? Your saved demo changes will be removed.")) return;
+      const fresh = makeSeed();
+      Object.keys(state).forEach(key => delete state[key]);
+      Object.assign(state, fresh);
+      cart = {};
+      selectedStampCustomerId = state.customers[0].id;
+      lastRewardCustomerId = "";
+      const orderContent = document.getElementById("orderContent");
+      if (orderContent) orderContent.hidden = false;
+      const orderSuccess = document.getElementById("orderSuccess");
+      if (orderSuccess) orderSuccess.hidden = true;
+      const stampSearch = document.getElementById("stampSearch");
+      if (stampSearch) stampSearch.value = "";
+      saveState();
+      if (currentPortal === "admin") {
+        renderStamps(); renderRewards(); renderComeback(); renderDashboard();
+      } else {
+        renderAll();
+      }
+      showToast("Demo data reset ✓");
+    }
+    function renderAll() {
+      const select = document.getElementById("tableSelect");
+      select.innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">T ${i + 1}</option>`).join("");
+      select.value = selectedTable;
+      renderMenu(); renderCartDock(); renderStamps(); renderRewards(); renderComeback(); renderDashboard();
+    }
+
+    document.querySelectorAll(".nav-item").forEach(button => button.addEventListener("click", () => setTab(button.dataset.tab)));
+    document.getElementById("homeButton").addEventListener("click", showHome);
+    document.getElementById("tableSelect").addEventListener("change", event => {
+      selectedTable = Number(event.target.value);
+      renderMenu(); showToast(`Table ${selectedTable} selected`);
+    });
+    document.getElementById("scanButton").addEventListener("click", () => {
+      selectedTable = selectedTable % 12 + 1;
+      document.getElementById("tableSelect").value = selectedTable;
+      renderMenu();
+      showToast(`QR scanned · Table ${selectedTable}`);
+    });
+    document.getElementById("viewCartButton").addEventListener("click", renderCartModal);
+    document.getElementById("stampSearch").addEventListener("input", renderStamps);
+    document.getElementById("rewardCustomerSelect").addEventListener("change", event => {
+      selectedStampCustomerId = event.target.value;
+      renderRewards();
+    });
+    document.getElementById("sendAllOffers").addEventListener("click", openOfferConfirmation);
+    document.getElementById("resetDemo").addEventListener("click", resetDemo);
+    document.getElementById("modalBackdrop").addEventListener("click", event => { if (event.target.id === "modalBackdrop") closeModal(); });
+    document.addEventListener("keydown", event => { if (event.key === "Escape") closeModal(); });
+    renderAll();
+    const requestedPortal = new URLSearchParams(window.location.search).get("portal");
+    if (requestedPortal === "customer" || requestedPortal === "admin") setPortal(requestedPortal);
+    else showHome();
+  </script>
+</body>
+</html>

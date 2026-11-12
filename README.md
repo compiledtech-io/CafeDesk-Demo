@@ -16,6 +16,10 @@ Open [`index.html`](./index.html) to choose a portal:
 - [`client.html`](./client.html) — customer-facing experience
 - [`admin.html`](./admin.html) — staff and owner experience
 
+### Live demo
+
+Visit the deployed application at **[cafedesk-swart.vercel.app](https://cafedesk-swart.vercel.app/)**.
+
 For the best experience, serve the folder with any static file server and open the resulting URL in a modern browser. Opening the HTML files directly also works in most browsers.
 
 ```bash
@@ -24,6 +28,28 @@ python3 -m http.server 8000
 ```
 
 Then visit <http://localhost:8000>.
+
+## Screenshots
+
+### Customer experience
+
+| Home | Menu | Checkout |
+| --- | --- | --- |
+| [![CafeDesk home screen](./assets/homescreen.webp)](./assets/homescreen.webp) | [![CafeDesk order screen](./assets/orderscreen.webp)](./assets/orderscreen.webp) | [![CafeDesk checkout screen](./assets/checkoutscreen.webp)](./assets/checkoutscreen.webp) |
+
+| Confirm order | My stamps | Review |
+| --- | --- | --- |
+| [![CafeDesk order confirmation](./assets/conform%20order%20screen.webp)](./assets/conform%20order%20screen.webp) | [![CafeDesk stamps screen](./assets/my%20stamp%20screen.webp)](./assets/my%20stamp%20screen.webp) | [![CafeDesk review screen](./assets/review%20screen.webp)](./assets/review%20screen.webp) |
+
+### Admin experience
+
+| Stamps | Rewards | Come Back |
+| --- | --- | --- |
+| [![CafeDesk admin stamps](./assets/admin%20stamp%20screen.webp)](./assets/admin%20stamp%20screen.webp) | [![CafeDesk admin rewards](./assets/Admin%20rewards%20screen.webp)](./assets/Admin%20rewards%20screen.webp) | [![CafeDesk admin comeback](./assets/Admin%20comeback%20screen.webp)](./assets/Admin%20comeback%20screen.webp) |
+
+| Dashboard | Dashboard detail | Come Back detail |
+| --- | --- | --- |
+| [![CafeDesk admin dashboard](./assets/Admin%20dashboard%20screen.webp)](./assets/Admin%20dashboard%20screen.webp) | [![CafeDesk admin dashboard detail](./assets/Admin%20dashboard%20screen2.webp)](./assets/Admin%20dashboard%20screen2.webp) | [![CafeDesk admin comeback detail](./assets/Admin%20comeback%20screen%202.webp)](./assets/Admin%20comeback%20screen%202.webp) |
 
 ## Features
 
@@ -74,6 +100,7 @@ The initial demo state includes:
 | [`index.html`](./index.html) | Complete CafeDesk application, styles, seeded data, state management, and UI logic |
 | [`client.html`](./client.html) | Customer portal entry point |
 | [`admin.html`](./admin.html) | Admin portal entry point |
+| [`assets/`](./assets/) | WebP product screenshots used in this README |
 | [`CafeDesk.code-workspace`](./CafeDesk.code-workspace) | VS Code workspace configuration |
 | [`IMPLEMENTATION-PLAN.md`](./IMPLEMENTATION-PLAN.md) | Product scope, implementation phases, and verification checklist |
 
